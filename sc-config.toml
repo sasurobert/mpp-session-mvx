@@ -1,0 +1,2 @@
+[[proxy]]
+path = "interactor/src/mpp_session_mvx_proxy.rs"

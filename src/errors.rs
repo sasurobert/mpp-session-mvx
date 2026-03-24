@@ -1,0 +1,13 @@
+pub const ERR_ZERO_DEPOSIT: &str = "Zero deposit not allowed";
+pub const ERR_DEADLINE_IN_PAST: &str = "Deadline must be in the future";
+pub const ERR_SESSION_ALREADY_EXISTS: &str = "Session already exists";
+pub const ERR_SESSION_NOT_FOUND: &str = "Session not found";
+pub const ERR_ALREADY_CLOSED: &str = "Session already closed";
+pub const ERR_NOT_RECEIVER: &str = "Only receiver can settle";
+pub const ERR_INVALID_AMOUNT: &str = "Invalid settlement amount";
+pub const ERR_INVALID_SIGNATURE: &str = "Invalid voucher signature";
+pub const ERR_INSUFFICIENT_FUNDS: &str = "Insufficient funds in session";
+pub const ERR_STALE_VOUCHER: &str = "Stale voucher nonce";
+pub const ERR_CHALLENGE_PERIOD_NOT_OVER: &str = "Challenge period not over";
+pub const ERR_NOT_EMPLOYER: &str = "Only employer can request close";
+pub const ERR_INVALID_TOKEN: &str = "Invalid token for top up";

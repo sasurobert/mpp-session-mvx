@@ -1,0 +1,13 @@
+/target
+/output/*
+!/output/*.wasm
+!/output/*.json
+!/output/*.abi.json
+**/*.rs.bk
+Cargo.lock
+.idea/
+.vscode/
+*.swp
+.DS_Store
+node_modules/
+**/target/

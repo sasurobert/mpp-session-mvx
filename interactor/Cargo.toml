@@ -1,0 +1,31 @@
+[package]
+name = "mpp-session-mvx-interactor"
+version = "0.0.0"
+authors = ["you"]
+edition = "2024"
+publish = false
+
+[[bin]]
+name = "rust-interact"
+path = "src/interactor_main.rs"
+
+[lib]
+path = "src/interact.rs"
+
+[dependencies.mpp-session-mvx]
+path = ".."
+
+[dependencies.multiversx-sc-snippets]
+version = "0.64.2"
+
+[dependencies.multiversx-sc]
+version = "0.64.2"
+
+[dependencies]
+clap = { version = "4.4.7", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.9"
+
+[features]
+chain-simulator-tests = []
+

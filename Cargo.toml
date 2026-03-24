@@ -1,0 +1,28 @@
+[package]
+name = "mpp-session-mvx"
+version = "0.1.1"
+authors = ["Antigravity"]
+edition = "2021"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["rlib"]
+
+[dependencies.multiversx-sc]
+version = "0.64.1"
+
+[dev-dependencies.multiversx-sc-scenario]
+version = "0.64.1"
+
+[dev-dependencies]
+ed25519-dalek = { version = "2.0.0", features = ["rand_core"] }
+hex = "0.4.3"
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
