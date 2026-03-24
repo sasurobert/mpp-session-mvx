@@ -1,0 +1,63 @@
+{
+  "contract": "mpp-session-mvx",
+  "storage": [
+    {
+      "name": "sessions",
+      "type": "SingleValueMapper<SessionData>",
+      "inputs": ["ManagedBuffer (channel_id)"]
+    },
+    {
+      "name": "last_channel_nonce",
+      "type": "SingleValueMapper<u64>",
+      "inputs": ["ManagedAddress (employer)"]
+    },
+    {
+      "name": "last_id",
+      "type": "SingleValueMapper<ManagedBuffer>",
+      "inputs": []
+    }
+  ],
+  "endpoints": [
+    {
+      "name": "open",
+      "payable": true,
+      "inputs": ["receiver: ManagedAddress", "deadline: u64"],
+      "output": "ManagedBuffer",
+      "errors": ["Zero deposit not allowed", "Deadline must be in the future"]
+    },
+    {
+      "name": "top_up",
+      "payable": true,
+      "inputs": ["channel_id: ManagedBuffer"],
+      "output": "()",
+      "errors": ["Session already closed", "Invalid token for top up", "Zero deposit not allowed"]
+    },
+    {
+      "name": "settle",
+      "payable": false,
+      "inputs": ["channel_id: ManagedBuffer", "amount: BigUint", "nonce: u64", "signature: ManagedBuffer"],
+      "output": "()",
+      "errors": ["Session already closed", "Stale voucher nonce", "Invalid settlement amount", "Insufficient funds in session", "Invalid voucher signature"]
+    },
+    {
+      "name": "close",
+      "payable": false,
+      "inputs": ["channel_id: ManagedBuffer", "amount: BigUint", "nonce: u64", "signature: ManagedBuffer"],
+      "output": "()",
+      "errors": ["Session already closed", "Stale voucher nonce", "Invalid settlement amount", "Insufficient funds in session", "Invalid voucher signature"]
+    },
+    {
+      "name": "request_close",
+      "payable": false,
+      "inputs": ["channel_id: ManagedBuffer"],
+      "output": "()",
+      "errors": ["Session already closed", "Only employer can request close", "Challenge period not over"]
+    }
+  ],
+  "structs": [
+    {
+      "name": "SessionData",
+      "fields": ["employer", "receiver", "token_identifier", "amount_locked", "amount_settled", "nonce", "deadline", "status"]
+    }
+  ]
+}

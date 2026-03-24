@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 pub mod config;
-pub mod mpp_session_mvx_proxy;
+mod mpp_session_mvx_proxy;
 
 use config::Config;
 use multiversx_sc_snippets::imports::*;
@@ -264,5 +264,8 @@ impl ContractInteract {
 
         println!("Result: {result_value:?}");
     }
+
+}
+
 
 }
