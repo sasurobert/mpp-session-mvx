@@ -1,8 +1,6 @@
+use ed25519_dalek::{Signer, SigningKey, VerifyingKey};
+use multiversx_sc::types::Address;
 use multiversx_sc_scenario::imports::*;
-use std::path::PathBuf;
-use multiversx_sc::types::{Address, BigUint};
-use multiversx_sc_scenario::scenario_model::*;
-use ed25519_dalek::{SigningKey, Signer, VerifyingKey};
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
@@ -23,7 +21,10 @@ fn test_negative_flow_invalid_signature() {
     let verifying_key: VerifyingKey = signing_key.verifying_key();
     let employer_address = Address::from(verifying_key.to_bytes());
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
@@ -31,7 +32,10 @@ fn test_negative_flow_invalid_signature() {
                 &employer_address,
                 Account::new().balance("10000000000000000000").nonce(1),
             )
-            .put_account(&receiver_address, Account::new().balance("100000000000000000").nonce(1))
+            .put_account(
+                &receiver_address,
+                Account::new().balance("100000000000000000").nonce(1),
+            )
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
     );
@@ -82,7 +86,10 @@ fn test_negative_flow_insufficient_funds() {
     let verifying_key: VerifyingKey = signing_key.verifying_key();
     let employer_address = Address::from(verifying_key.to_bytes());
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
@@ -90,7 +97,10 @@ fn test_negative_flow_insufficient_funds() {
                 &employer_address,
                 Account::new().balance("10000000000000000000").nonce(1),
             )
-            .put_account(&receiver_address, Account::new().balance("100000000000000000").nonce(1))
+            .put_account(
+                &receiver_address,
+                Account::new().balance("100000000000000000").nonce(1),
+            )
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
     );

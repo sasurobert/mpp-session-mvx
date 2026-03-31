@@ -1,8 +1,5 @@
+use multiversx_sc::types::Address;
 use multiversx_sc_scenario::imports::*;
-use std::path::PathBuf;
-use multiversx_sc::types::{Address, BigUint};
-use multiversx_sc_scenario::scenario_model::*;
-use ed25519_dalek::{SigningKey, Signer, VerifyingKey};
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
@@ -20,7 +17,10 @@ fn test_slashing_flow_success() {
 
     let employer_address = Address::from([1u8; 32]);
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
@@ -65,12 +65,10 @@ fn test_slashing_flow_success() {
     );
 
     // Employer gets their 500000 back
-    world.check_state_step(
-        CheckStateStep::new().put_account(
-            &employer_address,
-            CheckAccount::new().balance("10000000000000000000"),
-        ),
-    );
+    world.check_state_step(CheckStateStep::new().put_account(
+        &employer_address,
+        CheckAccount::new().balance("10000000000000000000"),
+    ));
 }
 
 #[test]
@@ -80,7 +78,10 @@ fn test_slashing_flow_fail_before_deadline() {
 
     let employer_address = Address::from([1u8; 32]);
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
