@@ -45,10 +45,13 @@ pub trait MppSessionContract {
         require!(payment.amount > 0u64, ERR_ZERO_DEPOSIT);
 
         let current_timestamp = self.blockchain().get_block_timestamp_seconds();
-        require!(deadline > current_timestamp.as_u64_seconds(), ERR_DEADLINE_IN_PAST);
+        require!(
+            deadline > current_timestamp.as_u64_seconds(),
+            ERR_DEADLINE_IN_PAST
+        );
 
         let employer = self.blockchain().get_caller();
-        
+
         // Compute unique channel_id
         let channel_nonce = self.last_channel_nonce(&employer).update(|n| {
             *n += 1;
@@ -60,7 +63,7 @@ pub trait MppSessionContract {
         channel_id_msg.append(receiver.as_managed_buffer());
         let nonce_bytes = channel_nonce.to_be_bytes();
         channel_id_msg.append_bytes(&nonce_bytes[..]);
-        
+
         let channel_id = self.crypto().keccak256(&channel_id_msg);
         let channel_id_buf = channel_id.as_managed_buffer();
 
@@ -75,11 +78,11 @@ pub trait MppSessionContract {
             status: SessionStatus::Open as u8,
         };
 
-        self.sessions(&channel_id_buf).set(&session);
+        self.sessions(channel_id_buf).set(&session);
         self.last_id().set(channel_id_buf.clone());
-        
+
         self.open_session_event(
-            &channel_id_buf,
+            channel_id_buf,
             &employer,
             &receiver,
             &payment.token_identifier,
@@ -93,10 +96,16 @@ pub trait MppSessionContract {
     #[endpoint(top_up)]
     fn top_up(&self, channel_id: ManagedBuffer) {
         let mut session = self.sessions(&channel_id).get();
-        require!(session.status == SessionStatus::Open as u8, ERR_ALREADY_CLOSED);
+        require!(
+            session.status == SessionStatus::Open as u8,
+            ERR_ALREADY_CLOSED
+        );
 
         let payment = self.call_value().egld_or_single_esdt();
-        require!(payment.token_identifier == session.token_identifier, ERR_INVALID_TOKEN);
+        require!(
+            payment.token_identifier == session.token_identifier,
+            ERR_INVALID_TOKEN
+        );
         require!(payment.amount > 0u64, ERR_ZERO_DEPOSIT);
 
         session.amount_locked += &payment.amount;
@@ -104,10 +113,19 @@ pub trait MppSessionContract {
     }
 
     #[endpoint(settle)]
-    fn settle(&self, channel_id: ManagedBuffer, amount: BigUint, nonce: u64, signature: ManagedBuffer) {
+    fn settle(
+        &self,
+        channel_id: ManagedBuffer,
+        amount: BigUint,
+        nonce: u64,
+        signature: ManagedBuffer,
+    ) {
         let mut session = self.sessions(&channel_id).get();
-        require!(session.status == SessionStatus::Open as u8, ERR_ALREADY_CLOSED);
-        
+        require!(
+            session.status == SessionStatus::Open as u8,
+            ERR_ALREADY_CLOSED
+        );
+
         self.verify_voucher(&channel_id, &amount, nonce, &signature, &session.employer);
 
         require!(nonce > session.nonce, ERR_STALE_VOUCHER);
@@ -125,10 +143,19 @@ pub trait MppSessionContract {
     }
 
     #[endpoint(close)]
-    fn close(&self, channel_id: ManagedBuffer, amount: BigUint, nonce: u64, signature: ManagedBuffer) {
+    fn close(
+        &self,
+        channel_id: ManagedBuffer,
+        amount: BigUint,
+        nonce: u64,
+        signature: ManagedBuffer,
+    ) {
         let mut session = self.sessions(&channel_id).get();
-        require!(session.status == SessionStatus::Open as u8, ERR_ALREADY_CLOSED);
-        
+        require!(
+            session.status == SessionStatus::Open as u8,
+            ERR_ALREADY_CLOSED
+        );
+
         self.verify_voucher(&channel_id, &amount, nonce, &signature, &session.employer);
 
         require!(nonce >= session.nonce, ERR_STALE_VOUCHER);
@@ -158,13 +185,19 @@ pub trait MppSessionContract {
     #[endpoint(request_close)]
     fn request_close(&self, channel_id: ManagedBuffer) {
         let mut session = self.sessions(&channel_id).get();
-        require!(session.status == SessionStatus::Open as u8, ERR_ALREADY_CLOSED);
+        require!(
+            session.status == SessionStatus::Open as u8,
+            ERR_ALREADY_CLOSED
+        );
 
         let caller = self.blockchain().get_caller();
         require!(caller == session.employer, ERR_NOT_EMPLOYER);
 
         let current_timestamp = self.blockchain().get_block_timestamp_seconds();
-        require!(current_timestamp.as_u64_seconds() >= session.deadline, ERR_CHALLENGE_PERIOD_NOT_OVER);
+        require!(
+            current_timestamp.as_u64_seconds() >= session.deadline,
+            ERR_CHALLENGE_PERIOD_NOT_OVER
+        );
 
         let refund = &session.amount_locked - &session.amount_settled;
         session.status = SessionStatus::Closed as u8;
@@ -220,32 +253,45 @@ pub trait MppSessionContract {
 
     // Helpers
 
-    fn send_tokens(&self, to: &ManagedAddress, token_id: &EgldOrEsdtTokenIdentifier, amount: &BigUint) {
+    fn send_tokens(
+        &self,
+        to: &ManagedAddress,
+        token_id: &EgldOrEsdtTokenIdentifier,
+        amount: &BigUint,
+    ) {
         if token_id.is_egld() {
             self.send().direct_egld(to, amount);
         } else {
-            self.send().direct_esdt(to, &token_id.clone().unwrap_esdt(), 0, amount);
+            self.send()
+                .direct_esdt(to, &token_id.clone().unwrap_esdt(), 0, amount);
         }
     }
 
-    fn verify_voucher(&self, channel_id: &ManagedBuffer, amount: &BigUint, nonce: u64, signature: &ManagedBuffer, employer: &ManagedAddress) {
+    fn verify_voucher(
+        &self,
+        channel_id: &ManagedBuffer,
+        amount: &BigUint,
+        nonce: u64,
+        signature: &ManagedBuffer,
+        employer: &ManagedAddress,
+    ) {
         let mut message = ManagedBuffer::new();
         message.append_bytes(b"mpp-session-v1");
         message.append(self.blockchain().get_sc_address().as_managed_buffer());
         message.append(channel_id);
-        
+
         let amount_buf = amount.to_bytes_be_buffer();
         message.append(&amount_buf);
-        
+
         let nonce_bytes = nonce.to_be_bytes();
         message.append_bytes(&nonce_bytes[..]);
 
         let hash = self.crypto().keccak256(&message);
-        
+
         self.crypto().verify_ed25519(
             employer.as_managed_buffer(),
             hash.as_managed_buffer(),
-            signature
+            signature,
         );
     }
 }

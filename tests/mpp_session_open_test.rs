@@ -1,6 +1,5 @@
-use multiversx_sc_scenario::imports::*;
 use multiversx_sc::types::Address;
-use multiversx_sc_scenario::scenario_model::*;
+use multiversx_sc_scenario::imports::*;
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
@@ -18,11 +17,17 @@ fn test_open_zero_deposit() {
 
     let employer_address = Address::from([1u8; 32]);
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
             .put_account(&receiver_address, Account::new().balance("0"))
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
@@ -50,11 +55,17 @@ fn test_open_deadline_in_past() {
 
     let employer_address = Address::from([1u8; 32]);
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
             .put_account(&receiver_address, Account::new().balance("0"))
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(5000), // current time is 5000

@@ -1,7 +1,6 @@
-use multiversx_sc_scenario::imports::*;
+use ed25519_dalek::{Signer, SigningKey, VerifyingKey};
 use multiversx_sc::types::Address;
-use multiversx_sc_scenario::scenario_model::*;
-use ed25519_dalek::{SigningKey, Signer, VerifyingKey};
+use multiversx_sc_scenario::imports::*;
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
@@ -12,7 +11,13 @@ fn world() -> ScenarioWorld {
     blockchain
 }
 
-fn sign_voucher(signing_key: &SigningKey, sc_address: &Address, channel_id: &[u8], amount: u64, nonce: u64) -> [u8; 64] {
+fn sign_voucher(
+    signing_key: &SigningKey,
+    sc_address: &Address,
+    channel_id: &[u8],
+    amount: u64,
+    nonce: u64,
+) -> [u8; 64] {
     let mut message = Vec::new();
     message.extend_from_slice(b"mpp-session-v1");
     message.extend_from_slice(sc_address.as_bytes());
@@ -47,12 +52,21 @@ fn test_close_invalid_signature() {
     let verifying_key: VerifyingKey = signing_key.verifying_key();
     let employer_address = Address::from(verifying_key.to_bytes());
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
-            .put_account(&receiver_address, Account::new().balance("100000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
+            .put_account(
+                &receiver_address,
+                Account::new().balance("100000000000000000").nonce(1),
+            )
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
     );
@@ -96,12 +110,21 @@ fn test_close_already_closed() {
     let verifying_key: VerifyingKey = signing_key.verifying_key();
     let employer_address = Address::from(verifying_key.to_bytes());
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
-            .put_account(&receiver_address, Account::new().balance("100000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
+            .put_account(
+                &receiver_address,
+                Account::new().balance("100000000000000000").nonce(1),
+            )
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
     );
@@ -159,12 +182,21 @@ fn test_close_stale_nonce() {
     let verifying_key: VerifyingKey = signing_key.verifying_key();
     let employer_address = Address::from(verifying_key.to_bytes());
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
-            .put_account(&receiver_address, Account::new().balance("100000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
+            .put_account(
+                &receiver_address,
+                Account::new().balance("100000000000000000").nonce(1),
+            )
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
     );
@@ -223,12 +255,21 @@ fn test_close_zero_refund() {
     let verifying_key: VerifyingKey = signing_key.verifying_key();
     let employer_address = Address::from(verifying_key.to_bytes());
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
-            .put_account(&receiver_address, Account::new().balance("100000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
+            .put_account(
+                &receiver_address,
+                Account::new().balance("100000000000000000").nonce(1),
+            )
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
     );
@@ -265,7 +306,10 @@ fn test_close_zero_refund() {
     // Receiver gets all 5_000_000 + initial 100000000000000000, SC has 0
     world.check_state_step(
         CheckStateStep::new()
-            .put_account(&receiver_address, CheckAccount::new().balance("100000000005000000"))
+            .put_account(
+                &receiver_address,
+                CheckAccount::new().balance("100000000005000000"),
+            )
             .put_account(&sc_address, CheckAccount::new().balance("0")),
     );
 }
@@ -280,12 +324,21 @@ fn test_close_zero_release() {
     let verifying_key: VerifyingKey = signing_key.verifying_key();
     let employer_address = Address::from(verifying_key.to_bytes());
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
-            .put_account(&receiver_address, Account::new().balance("100000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
+            .put_account(
+                &receiver_address,
+                Account::new().balance("100000000000000000").nonce(1),
+            )
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
     );
@@ -334,7 +387,10 @@ fn test_close_zero_release() {
     // Receiver only got 3_000_000 total + initial 100000000000000000, employer gets refund of 2_000_000
     world.check_state_step(
         CheckStateStep::new()
-            .put_account(&receiver_address, CheckAccount::new().balance("100000000003000000"))
+            .put_account(
+                &receiver_address,
+                CheckAccount::new().balance("100000000003000000"),
+            )
             .put_account(&sc_address, CheckAccount::new().balance("0")),
     );
 }

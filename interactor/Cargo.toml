@@ -10,6 +10,7 @@ name = "rust-interact"
 path = "src/interactor_main.rs"
 
 [lib]
+name = "rust_interact"
 path = "src/interact.rs"
 
 [dependencies.mpp-session-mvx]

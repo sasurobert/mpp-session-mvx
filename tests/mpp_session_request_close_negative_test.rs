@@ -1,6 +1,5 @@
-use multiversx_sc_scenario::imports::*;
 use multiversx_sc::types::Address;
-use multiversx_sc_scenario::scenario_model::*;
+use multiversx_sc_scenario::imports::*;
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
@@ -27,13 +26,22 @@ fn test_request_close_not_employer() {
     let employer_address = Address::from([1u8; 32]);
     let receiver_address = Address::from([2u8; 32]);
     let attacker_address = Address::from([3u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 4,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
             .put_account(&receiver_address, Account::new().balance("0"))
-            .put_account(&attacker_address, Account::new().balance("100000000000000000").nonce(1))
+            .put_account(
+                &attacker_address,
+                Account::new().balance("100000000000000000").nonce(1),
+            )
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
     );
@@ -74,11 +82,17 @@ fn test_request_close_already_closed() {
 
     let employer_address = Address::from([1u8; 32]);
     let receiver_address = Address::from([2u8; 32]);
-    let sc_address = Address::from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);
+    let sc_address = Address::from([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 3,
+    ]);
 
     world.set_state_step(
         SetStateStep::new()
-            .put_account(&employer_address, Account::new().balance("10000000000000000000").nonce(1))
+            .put_account(
+                &employer_address,
+                Account::new().balance("10000000000000000000").nonce(1),
+            )
             .put_account(&receiver_address, Account::new().balance("0"))
             .new_address(&employer_address, 1, &sc_address)
             .block_timestamp_seconds(100),
